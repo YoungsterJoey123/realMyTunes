@@ -1,6 +1,7 @@
 package dk.easv.mrs.GUI.Controller;
 
 // java imports
+import dk.easv.mrs.BE.Playlist;
 import dk.easv.mrs.BE.Song;
 import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
@@ -17,11 +18,21 @@ import dk.easv.mrs.GUI.Model.MyTunesModel;
 
 public class MyTunesViewController implements Initializable {
 
+
     @FXML private TableView<Song> tblSong;
     @FXML private TableColumn<Song, String> colTitle;
     @FXML private TableColumn<Song, String> colArtist;
     @FXML private TableColumn<Song, String> colGenre;
     @FXML private TableColumn<Song, Integer> colTime;
+
+    @FXML private TableView<Playlist> tblPlaylist;
+    @FXML private TableColumn<Playlist, String> colPlaylistName;
+    @FXML private TableColumn<Playlist, String> colPlaylistSongs;
+    @FXML private TableColumn<Playlist, Integer> colPlaylistTime;
+
+    @FXML private TableView<Song> tblPlaylistSongs;
+    @FXML private TableColumn<Song, String> colPlaylistSongTitle;
+    @FXML private TableColumn<Song, String> colPlaylistSongArtist;
 
     @FXML private TextField txtSongSearch;
     @FXML private TextField txtSongTitle;

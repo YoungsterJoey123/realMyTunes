@@ -24,6 +24,16 @@ public class Playlist {
         return time;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
 
+    public void setSize(int size) {
+        this.size = size;
+    }
+
+    public void setTime(int time) {
+        this.time = time;
+    }
 }
 

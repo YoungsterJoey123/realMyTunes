@@ -28,7 +28,7 @@ public class MyTunesDAO_DB implements IMyTunesDataAccess {
         try (Connection conn = dbConnector.getConnection();
              Statement stmt = conn.createStatement()) {
 
-            String sql = "SELECT * FROM Song";
+            String sql = "SELECT * FROM Songs";
 
             ResultSet rs = stmt.executeQuery(sql);
 
@@ -50,7 +50,7 @@ public class MyTunesDAO_DB implements IMyTunesDataAccess {
 
     @Override
     public Song createSong(Song song) throws Exception {
-        String sql = "INSERT INTO Song (Title, Artist, Genre, Playtime) VALUES (?, ?, ?, ?);";
+        String sql = "INSERT INTO Songs (Title, Artist, Genre, Playtime) VALUES (?, ?, ?, ?);";
 
         try (Connection conn = dbConnector.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -79,7 +79,7 @@ public class MyTunesDAO_DB implements IMyTunesDataAccess {
 
     @Override
     public void editSong(Song song) throws Exception {
-        String sql = "UPDATE Song SET Title = ?, Artist = ?, Genre = ?, Playtime = ? WHERE Id = ?";
+        String sql = "UPDATE Songs SET Title = ?, Artist = ?, Genre = ?, Playtime = ? WHERE Id = ?";
 
         try (Connection conn = dbConnector.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -98,7 +98,7 @@ public class MyTunesDAO_DB implements IMyTunesDataAccess {
 
     @Override
     public void deleteSong(Song song) throws Exception {
-        String sql = "DELETE FROM Song WHERE Id = ?";
+        String sql = "DELETE FROM Songs WHERE Id = ?";
 
         try (Connection conn = dbConnector.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
