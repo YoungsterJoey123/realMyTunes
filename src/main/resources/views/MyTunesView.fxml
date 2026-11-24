@@ -44,7 +44,7 @@
       </HBox>
    </top>
    <center>
-      <HBox prefHeight="401.0" prefWidth="1301.0" BorderPane.alignment="CENTER">
+      <HBox alignment="CENTER_LEFT" spacing="16.0" BorderPane.alignment="CENTER">
          <padding>
             <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
          </padding>
