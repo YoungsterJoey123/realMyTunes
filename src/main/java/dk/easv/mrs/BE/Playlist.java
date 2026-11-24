@@ -1,29 +1,41 @@
 package dk.easv.mrs.BE;
 
+import java.util.List;
+
 public class Playlist {
 
+    private int id;
     private String name;
-    private int size;
-    private int time;
+    private int songCount;
+    private int playlistTime;
 
-    public Playlist(String name, int size, int time){
+    public Playlist(int id, String name, int songCount, int playlistTime) {
+        this.id = id;
         this.name = name;
-        this.size = size;
-        this.time = time;
+        this.songCount = songCount;
+        this.playlistTime = playlistTime;
     }
 
+    public int getId() {
+        return id;
+    }
     public String getName() {
         return name;
     }
-
-    public int getSize() {
-        return size;
+    public int getSongCount() {
+        return songCount;
+    }
+    public int getPlaylistTime() {
+        return playlistTime;
     }
 
-    public int getTime() {
-        return time;
-    }
 
+    public void setSongCount(int songCount) {
+        this.songCount = songCount;
+    }
+    public void setPlaylistTime(int playlistTime) {
+        this.playlistTime = playlistTime;
+    }
 
 }
 

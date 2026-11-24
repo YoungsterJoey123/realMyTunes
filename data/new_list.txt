@@ -1,2 +1,0 @@
-1,1980,Mr Burns
-2,1980,Mr Burns #2
