@@ -30,7 +30,7 @@ public class MyTunesViewController implements Initializable {
     @FXML private TableColumn<Playlist, String> colPlaylistSongs;
     @FXML private TableColumn<Playlist, Integer> colPlaylistTime;
 
-    @FXML private TableView<Song> tblPlaylistSongs;
+    @FXML private ListView<Song> tblPlaylistSongs;
     @FXML private TableColumn<Song, String> colPlaylistSongTitle;
     @FXML private TableColumn<Song, String> colPlaylistSongArtist;
 

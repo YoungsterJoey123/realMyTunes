@@ -14,15 +14,15 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane prefHeight="583.0" prefWidth="1339.0" stylesheets="@../css/Farver.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1">   <top>
+<BorderPane prefHeight="583.0" prefWidth="1339.0" stylesheets="@../css/Farver.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.easv.mrs.GUI.Controller.MyTunesViewController">   <top>
       <HBox alignment="CENTER_LEFT" spacing="16.0" BorderPane.alignment="CENTER">
          <padding>
             <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
          </padding>
          <children>
-            <Button fx:id="btnRewind" mnemonicParsing="false" text="⏮" />
-            <Button fx:id="btnPause" mnemonicParsing="false" text="⏸" />
-            <Button fx:id="btnSkip" mnemonicParsing="false" text="⏭" />
+            <Button fx:id="btnRewind" mnemonicParsing="false" onAction="#handleRewindClick" text="⏮" />
+            <Button fx:id="btnPause" mnemonicParsing="false" onAction="#handlePauseClick" text="⏸" />
+            <Button fx:id="btnSkip" mnemonicParsing="false" onAction="#handleSkipClick" text="⏭" />
             <ImageView fx:id="imgSongArt" fitHeight="150.0" fitWidth="162.0" pickOnBounds="true" preserveRatio="true" />
             <VBox alignment="CENTER_LEFT" prefHeight="150.0" prefWidth="108.0" spacing="4.0">
                <padding>
@@ -39,7 +39,7 @@
             <Label prefHeight="17.0" prefWidth="32.0" text="🔊" />
             <Slider fx:id="sldVolume" />
             <TextField fx:id="txtSongSearch" prefHeight="25.0" prefWidth="187.0" promptText="Search..." />
-            <Button fx:id="btnSearch" mnemonicParsing="false" prefHeight="25.0" prefWidth="77.0" text="Search" />
+            <Button fx:id="btnSearch" mnemonicParsing="false" onAction="#handleSearchClick" prefHeight="25.0" prefWidth="77.0" text="Search" />
          </children>
       </HBox>
    </top>
@@ -68,9 +68,9 @@
                         <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
                      </padding>
                      <children>
-                        <Button fx:id="btnNewPlaylist" mnemonicParsing="false" text="New..." />
-                        <Button fx:id="btnEditPlaylist" mnemonicParsing="false" text="Edit..." />
-                        <Button fx:id="btnDeletePlaylist" mnemonicParsing="false" text="Delete" />
+                        <Button fx:id="btnNewPlaylist" mnemonicParsing="false" onAction="#handleNewPlaylist" text="New..." />
+                        <Button fx:id="btnEditPlaylist" mnemonicParsing="false" onAction="#handleUpdatePlaylist" text="Edit..." />
+                        <Button fx:id="btnDeletePlaylist" mnemonicParsing="false" onAction="#handleDeletePlaylist" text="Delete" />
                      </children>
                   </HBox>
                </children>
@@ -91,7 +91,7 @@
                         <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
                      </padding>
                      <children>
-                        <Button fx:id="btnDeleteFromPlaylist" mnemonicParsing="false" text="Delete" />
+                        <Button fx:id="btnDeleteFromPlaylist" mnemonicParsing="false" onAction="#handleDeleteFromPlaylist" text="Delete" />
                      </children>
                   </HBox>
                </children>
@@ -101,7 +101,7 @@
             </VBox>
             <VBox alignment="CENTER" prefHeight="420.0" prefWidth="46.0">
                <children>
-                  <Button fx:id="btnAddToPlaylist" mnemonicParsing="false" prefHeight="31.0" prefWidth="50.0" text="←" />
+                  <Button fx:id="btnAddToPlaylist" mnemonicParsing="false" onAction="#handleAddClick" prefHeight="31.0" prefWidth="50.0" text="←" />
                </children>
             </VBox>
             <VBox prefHeight="420.0" prefWidth="584.0" spacing="16.0">
@@ -116,7 +116,7 @@
                         <TableColumn fx:id="colTitle" prefWidth="159.0" text="Title" />
                         <TableColumn fx:id="colArtist" prefWidth="154.0" text="Artist" />
                         <TableColumn fx:id="colGenre" prefWidth="146.0" text="Genre" />
-                        <TableColumn fx:id="colTime" prefWidth="92.0" text="Time" />
+                        <TableColumn fx:id="colPlaytime" prefWidth="92.0" text="Time" />
                      </columns>
                   </TableView>
                   <HBox alignment="CENTER_LEFT" prefHeight="44.0" prefWidth="253.0" spacing="16.0">
@@ -124,9 +124,9 @@
                         <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
                      </padding>
                      <children>
-                        <Button fx:id="btnNewSong" mnemonicParsing="false" text="New..." />
-                        <Button fx:id="btnEditSong" mnemonicParsing="false" text="Edit..." />
-                        <Button fx:id="btnDeleteSong" mnemonicParsing="false" text="Delete" />
+                        <Button fx:id="btnNewSong" mnemonicParsing="false" onAction="#handleCreateNewSong" text="New..." />
+                        <Button fx:id="btnEditSong" mnemonicParsing="false" onAction="#handleUpdateSong" text="Edit..." />
+                        <Button fx:id="btnDeleteSong" mnemonicParsing="false" onAction="#handleDeleteSong" text="Delete" />
                      </children>
                   </HBox>
                </children>
