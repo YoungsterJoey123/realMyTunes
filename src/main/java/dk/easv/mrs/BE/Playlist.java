@@ -1,12 +1,14 @@
 package dk.easv.mrs.BE;
 
+import java.util.List;
+
 public class Playlist {
 
     private String name;
     private int size;
     private int time;
 
-    public Playlist(String name, int size, int time){
+    public Playlist(String name, int size, int time, List<Song> songsInPlaylist){
         this.name = name;
         this.size = size;
         this.time = time;
