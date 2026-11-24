@@ -157,7 +157,31 @@ public class MyTunesViewController implements Initializable {
             }
         }
     }
-
-    public void handleNewPlaylist(ActionEvent actionEvent) {
+    @FXML
+    private void handleNewPlaylist(ActionEvent actionEvent) {
+    }
+    @FXML
+    private void handleRewindClick(ActionEvent actionEvent) {
+    }
+    @FXML
+    private void handlePauseClick(ActionEvent actionEvent) {
+    }
+    @FXML
+    private void handleSkipClick(ActionEvent actionEvent) {
+    }
+    @FXML
+    private void handleSearchClick(ActionEvent actionEvent) {
+    }
+    @FXML
+    private void handleUpdatePlaylist(ActionEvent actionEvent) {
+    }
+    @FXML
+    private void handleDeletePlaylist(ActionEvent actionEvent) {
+    }
+    @FXML
+    private void handleDeleteFromPlaylist(ActionEvent actionEvent) {
+    }
+    @FXML
+    private void handleAddClick(ActionEvent actionEvent) {
     }
 }
