@@ -23,7 +23,7 @@ public class MyTunesViewController implements Initializable {
     @FXML private TableColumn<Song, String> colTitle;
     @FXML private TableColumn<Song, String> colArtist;
     @FXML private TableColumn<Song, String> colGenre;
-    @FXML private TableColumn<Song, Integer> colTime;
+    @FXML private TableColumn<Song, Integer> colPlaytime;
 
     @FXML private TableView<Playlist> tblPlaylist;
     @FXML private TableColumn<Playlist, String> colPlaylistName;
@@ -38,7 +38,7 @@ public class MyTunesViewController implements Initializable {
     @FXML private TextField txtSongTitle;
     @FXML private TextField txtSongArtist;
     @FXML private TextField txtSongGenre;
-    @FXML private TextField txtSongTime;
+    @FXML private TextField txtSongPlaytime;
 
     @FXML private Button btnNewSong;
     @FXML private Button btnEdit;
@@ -63,7 +63,7 @@ public class MyTunesViewController implements Initializable {
         colTitle.setCellValueFactory(new PropertyValueFactory<>("title"));
         colArtist.setCellValueFactory(new PropertyValueFactory<>("artist"));
         colGenre.setCellValueFactory(new PropertyValueFactory<>("genre"));
-        colTime.setCellValueFactory(new PropertyValueFactory<>("time"));
+        colPlaytime.setCellValueFactory(new PropertyValueFactory<>("playtime"));
 
         // connect tableview to the list (filtered, then sorted)
         SortedList<Song> sortedData = new SortedList<>(myTunesModel.getObservableSongs());
@@ -92,7 +92,7 @@ public class MyTunesViewController implements Initializable {
                 txtSongTitle.setText(newValue.getTitle());
                 txtSongArtist.setText(newValue.getArtist());
                 txtSongGenre.setText(newValue.getGenre());
-                txtSongTime.setText(String.valueOf(newValue.getPlaytime()));
+                txtSongPlaytime.setText(String.valueOf(newValue.getPlaytime()));
             }
         });
     }
@@ -109,15 +109,15 @@ public class MyTunesViewController implements Initializable {
         if (!txtSongTitle.getText().isEmpty() &&
                 !txtSongArtist.getText().isEmpty() &&
                 !txtSongGenre.getText().isEmpty() &&
-                !txtSongTime.getText().isEmpty()) {
+                !txtSongPlaytime.getText().isEmpty()) {
 
             try {
                 String title = txtSongTitle.getText();
                 String artist = txtSongArtist.getText();
                 String genre = txtSongGenre.getText();
-                int time = Integer.parseInt(txtSongTime.getText());
+                int playtime = Integer.parseInt(txtSongPlaytime.getText());
 
-                Song newSong = new Song(-1, title, artist, genre, time);
+                Song newSong = new Song(-1, title, artist, genre, playtime);
                 myTunesModel.createSong(newSong);
             } catch (Exception err) {
                 displayError(err);
@@ -135,7 +135,7 @@ public class MyTunesViewController implements Initializable {
                 selectedSong.setTitle(txtSongTitle.getText());
                 selectedSong.setArtist(txtSongArtist.getText());
                 selectedSong.setGenre(txtSongGenre.getText());
-                selectedSong.setPlaytime(Integer.parseInt(txtSongTime.getText()));
+                selectedSong.setPlaytime(Integer.parseInt(txtSongPlaytime.getText()));
 
                 myTunesModel.editSong(selectedSong);
                 tblSong.refresh();

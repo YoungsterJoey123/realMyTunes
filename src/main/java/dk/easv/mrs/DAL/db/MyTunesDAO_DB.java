@@ -39,7 +39,7 @@ public class MyTunesDAO_DB implements IMyTunesDataAccess {
                 String title = rs.getString("Title");
                 String artist = rs.getString("Artist");
                 String genre = rs.getString("Genre");
-                int playtime = rs.getInt("Time");
+                int playtime = rs.getInt("Playtime");
 
                 songs.add(new Song(id, title, artist, genre, playtime));
             }
