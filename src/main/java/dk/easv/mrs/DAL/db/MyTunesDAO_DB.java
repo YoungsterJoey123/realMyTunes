@@ -41,8 +41,9 @@ public class MyTunesDAO_DB implements IMyTunesDataAccess {
                 String artist = rs.getString("Artist");
                 String genre = rs.getString("Genre");
                 int playtime = rs.getInt("Playtime");
+                String filePath = rs.getString("FilePath");
 
-                songs.add(new Song(id, title, artist, genre, playtime));
+                songs.add(new Song(id, title, artist, genre, playtime, filePath));
             }
         }
 
@@ -51,7 +52,7 @@ public class MyTunesDAO_DB implements IMyTunesDataAccess {
 
     @Override
     public Song createSong(Song song) throws Exception {
-        String sql = "INSERT INTO Songs (Title, Artist, Genre, Playtime) VALUES (?, ?, ?, ?);";
+        String sql = "INSERT INTO Songs (Title, Artist, Genre, Playtime, FilePath) VALUES (?, ?, ?, ?, ?);";
 
         try (Connection conn = dbConnector.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -61,6 +62,7 @@ public class MyTunesDAO_DB implements IMyTunesDataAccess {
             stmt.setString(2, song.getArtist());
             stmt.setString(3, song.getGenre());
             stmt.setInt(4, song.getPlaytime());
+            stmt.setString(5, song.getFilePath());
 
             // Run the specified SQL statement
             stmt.executeUpdate();
@@ -74,7 +76,7 @@ public class MyTunesDAO_DB implements IMyTunesDataAccess {
             }
 
             // Create song object and send up the layers
-            return new Song(id, song.getTitle(), song.getArtist(), song.getGenre(), song.getPlaytime());
+            return new Song(id, song.getTitle(), song.getArtist(), song.getGenre(), song.getPlaytime(), song.getFilePath());
         }
     }
 
@@ -176,7 +178,8 @@ public class MyTunesDAO_DB implements IMyTunesDataAccess {
                         rs.getString("Title"),
                         rs.getString("Artist"),
                         rs.getString("Genre"),
-                        rs.getInt("Playtime")));
+                        rs.getInt("Playtime"),
+                        rs.getString("FilePath")));
             }
         }
         return songs;

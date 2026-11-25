@@ -7,14 +7,16 @@ public class Song {
     private String artist;
     private String genre;
     private int playtime;
+    private String filePath;
 
 
-    public Song(int id, String title, String artist, String genre, int playtime) {
+    public Song(int id, String title, String artist, String genre, int playtime, String filePath) {
         this.id = id;
         this.title = title;
         this.artist = artist;
         this.genre = genre;
         this.playtime = playtime;
+        this.filePath = filePath;
 
     }
 
@@ -58,5 +60,12 @@ public class Song {
     @Override
     public String toString() {
         return title + " - " + artist;
+    }
+
+    public String getFilePath() {
+        return filePath;
+    }
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
     }
 }

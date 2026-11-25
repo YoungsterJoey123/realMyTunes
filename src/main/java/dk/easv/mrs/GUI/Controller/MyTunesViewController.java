@@ -9,7 +9,11 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.ImageView;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 
+import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -31,11 +35,16 @@ public class MyTunesViewController implements Initializable {
     @FXML private ListView<Song> tblPlaylistSongs;
 
     @FXML private TextField txtSongSearch, txtSongTitle, txtSongArtist, txtSongGenre, txtSongPlaytime;
-    
-    @FXML private Button btnNewSong, btnEdit, btnDelete, btnNewPlaylist, btnEditPlaylist, btnDeletePlaylist, btnDeleteFromPlaylist, btnAddToPlaylist;
-   
+    @FXML private Button btnNewSong, btnEdit, btnDelete, btnNewPlaylist, btnEditPlaylist, btnDeletePlaylist, btnDeleteFromPlaylist, btnAddToPlaylist, btnRewind, btnPause, btnSkip, btnSearch;
+    @FXML private Label lblSongName, lblArtist, lblTimePassed, lblTimeLeft;
+
+    @FXML private Slider sldSongLength, sldVolume;
+    @FXML private ImageView imgSongArt;
+
+    private String selectedFilePath;
 
     private MyTunesModel myTunesModel;
+    private MediaPlayer mediaPlayer;
 
     public MyTunesViewController() {
         try {
@@ -44,6 +53,50 @@ public class MyTunesViewController implements Initializable {
             displayError(e);
             e.printStackTrace();
         }
+    }
+    private void playSong(Song song) {
+        if (song == null || song.getFilePath() == null) return;
+
+        // stop and release the previous song
+        if (mediaPlayer != null) {
+            mediaPlayer.stop();
+            mediaPlayer.dispose();
+        }
+
+        File file = new File(song.getFilePath());
+        if (!file.exists()) {
+            System.out.println("File not found: " + file.getAbsolutePath());
+            return;
+        }
+
+        Media media = new Media(file.toURI().toString());
+        mediaPlayer = new MediaPlayer(media);
+
+        lblSongName.setText(song.getTitle());
+        lblArtist.setText(song.getArtist());
+        mediaPlayer.setVolume(sldVolume.getValue());
+
+        mediaPlayer.setOnReady(() ->
+                sldSongLength.setMax(media.getDuration().toSeconds()));
+
+        mediaPlayer.currentTimeProperty().addListener((obs, old, now) -> {
+            if (!sldSongLength.isValueChanging()) {
+                sldSongLength.setValue(now.toSeconds());
+            }
+            lblTimePassed.setText(formatTime(now.toSeconds()));
+            lblTimeLeft.setText(formatTime(media.getDuration().toSeconds() - now.toSeconds()));
+        });
+        mediaPlayer.play();
+    }
+
+    /*
+    formats seconds into minutes:seconds
+    s / 60 returns how many times s can be divided into minutes
+    s % 60 returns how many seconds are left after dividing into minutes
+     */
+    private String formatTime(double seconds) {
+        int s = (int) seconds;
+        return String.format("%d:%02d", s / 60, s % 60);
     }
 
     @Override
@@ -129,7 +182,7 @@ public class MyTunesViewController implements Initializable {
                 String genre = txtSongGenre.getText();
                 int playtime = Integer.parseInt(txtSongPlaytime.getText());
 
-                Song newSong = new Song(-1, title, artist, genre, playtime);
+                Song newSong = new Song(-1, title, artist, genre, playtime, selectedFilePath);
                 myTunesModel.createSong(newSong);
             } catch (Exception err) {
                 displayError(err);
