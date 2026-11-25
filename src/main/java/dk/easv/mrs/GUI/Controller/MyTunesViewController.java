@@ -72,7 +72,8 @@ public class MyTunesViewController implements Initializable {
                 String lowerCaseFilter = newValue.toLowerCase();
 
                 return song.getTitle().toLowerCase().contains(lowerCaseFilter)
-                        || song.getArtist().toLowerCase().contains(lowerCaseFilter);
+                        || song.getArtist().toLowerCase().contains(lowerCaseFilter)
+                        || song.getGenre().toLowerCase().contains(lowerCaseFilter);
             });
         });
 
