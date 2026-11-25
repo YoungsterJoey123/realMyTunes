@@ -19,6 +19,7 @@ import java.util.ResourceBundle;
 
 // project imports
 import dk.easv.mrs.GUI.Model.MyTunesModel;
+import javafx.stage.FileChooser;
 
 public class MyTunesViewController implements Initializable {
 
@@ -187,6 +188,19 @@ public class MyTunesViewController implements Initializable {
             } catch (Exception err) {
                 displayError(err);
             }
+        }
+    }
+    /*
+    EventHandler for choosing a file when adding a new song
+    only takes mp3 or wav files
+     */
+    @FXML
+    private void handleChooseFile(ActionEvent event){
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("MP3 or WAV Files", ".mp3, .wav"));
+        File file = fileChooser.showOpenDialog(txtSongTitle.getScene().getWindow());
+        if (file != null) {
+            selectedFilePath = "music/" + file.getName();
         }
     }
 
