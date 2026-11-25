@@ -46,10 +46,22 @@
             songsToBeViewed.add(createdSong);
         }
 
-        public void editSong(Song editedSong) throws Exception {
-            songManager.editSong(editedSong);                          // was updateSong
-            songsToBeViewed.set(songsToBeViewed.indexOf(editedSong), editedSong);
+       public void editSong(Song editedSong) throws Exception {
+        songManager.editSong(editedSong);
+
+        for (int i = 0; i < songsToBeViewed.size(); i++) {
+          if (songsToBeViewed.get(i).getId() == editedSong.getId()) {
+            songsToBeViewed.set(i, editedSong);
+            break;
+          }
         }
+        for (int i = 0; i < playlistSongs.size(); i++) {
+          if (playlistSongs.get(i).getId() == editedSong.getId()) {
+            playlistSongs.set(i, editedSong);
+            break;
+          }
+        }
+      }
 
         public void deleteSong(Song selectedSong) throws Exception {
             songManager.deleteSong(selectedSong);

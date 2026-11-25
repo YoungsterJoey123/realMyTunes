@@ -6,6 +6,11 @@ import dk.easv.mrs.BE.Song;
 import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+import javafx.stage.Modality;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -35,14 +40,13 @@ public class MyTunesViewController implements Initializable {
     //@FXML private TableColumn<Song, String> colPlaylistSongTitle, colPlaylistSongArtist;
     @FXML private ListView<Song> tblPlaylistSongs;
 
-    @FXML private TextField txtSongSearch, txtSongTitle, txtSongArtist, txtSongGenre, txtSongPlaytime;
-    @FXML private Button btnNewSong, btnEdit, btnDelete, btnNewPlaylist, btnEditPlaylist, btnDeletePlaylist, btnDeleteFromPlaylist, btnAddToPlaylist, btnRewind, btnPause, btnSkip;
+    @FXML private TextField txtSongSearch;
+    @FXML private Button btnNewSong, btnEditSong, btnDeleteSong, btnNewPlaylist, btnEditPlaylist, btnDeletePlaylist, btnDeleteFromPlaylist, btnAddToPlaylist, btnRewind, btnPause, btnSkip;
     @FXML private Label lblSongName, lblArtist, lblTimePassed, lblTimeLeft;
 
     @FXML private Slider sldSongLength, sldVolume;
     @FXML private ImageView imgSongArt;
 
-    private String selectedFilePath;
 
     private MyTunesModel myTunesModel;
     private MediaPlayer mediaPlayer;
@@ -131,16 +135,6 @@ public class MyTunesViewController implements Initializable {
             });
         });
 
-        // fill the text fields when a song is selected
-        tblSong.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue != null) {
-                txtSongTitle.setText(newValue.getTitle());
-                txtSongArtist.setText(newValue.getArtist());
-                txtSongGenre.setText(newValue.getGenre());
-                txtSongPlaytime.setText(String.valueOf(newValue.getPlaytime()));
-            }
-        });
-
         // playlists table
         colPlaylistName.setCellValueFactory(new PropertyValueFactory<>("name"));
         colPlaylistSongs.setCellValueFactory(new PropertyValueFactory<>("songCount"));
@@ -172,57 +166,50 @@ public class MyTunesViewController implements Initializable {
 
     @FXML
     private void handleCreateNewSong(ActionEvent actionEvent) {
-        if (!txtSongTitle.getText().isEmpty() &&
-                !txtSongArtist.getText().isEmpty() &&
-                !txtSongGenre.getText().isEmpty() &&
-                !txtSongPlaytime.getText().isEmpty()) {
-
-            try {
-                String title = txtSongTitle.getText();
-                String artist = txtSongArtist.getText();
-                String genre = txtSongGenre.getText();
-                int playtime = Integer.parseInt(txtSongPlaytime.getText());
-
-                Song newSong = new Song(-1, title, artist, genre, playtime, selectedFilePath);
-                myTunesModel.createSong(newSong);
-            } catch (Exception err) {
-                displayError(err);
-            }
-        }
+    Song newSong = showSongDialog(null);
+    if (newSong == null) return;
+    try {
+      myTunesModel.createSong(newSong);
+    } catch (Exception err) {
+      displayError(err);
     }
-    /*
-    EventHandler for choosing a file when adding a new song
-    only takes mp3 or wav files
-     */
-    @FXML
-    private void handleChooseFile(ActionEvent event){
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("MP3 or WAV Files", ".mp3, .wav"));
-        File file = fileChooser.showOpenDialog(txtSongTitle.getScene().getWindow());
-        if (file != null) {
-            selectedFilePath = "music/" + file.getName();
-        }
-    }
+  }
 
     @FXML
     private void handleUpdateSong(ActionEvent actionEvent) {
-        Song selectedSong = tblSong.getSelectionModel().getSelectedItem();
+    Song selectedSong = tblSong.getSelectionModel().getSelectedItem();
+    if (selectedSong == null) return;
 
-        if (selectedSong != null) {
-            try {
-                // update selectedSong
-                selectedSong.setTitle(txtSongTitle.getText());
-                selectedSong.setArtist(txtSongArtist.getText());
-                selectedSong.setGenre(txtSongGenre.getText());
-                selectedSong.setPlaytime(Integer.parseInt(txtSongPlaytime.getText()));
-
-                myTunesModel.editSong(selectedSong);
-                tblSong.refresh();
-            } catch (Exception err) {
-                displayError(err);
-            }
-        }
+    Song edited = showSongDialog(selectedSong);   // a new object, original is untouched
+    if (edited == null) return;
+    try {
+      myTunesModel.editSong(edited);
+    } catch (Exception err) {
+      displayError(err);
     }
+  }
+
+  /** Opens the New/Edit dialog. Returns the entered song, or null if cancelled. */
+  private Song showSongDialog(Song song) {
+    try {
+      FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/SongDialogView.fxml"));
+      Parent root = loader.load();
+      SongDialogController dialog = loader.getController();
+      dialog.setSong(song);
+
+      Stage stage = new Stage();
+      stage.setTitle(song == null ? "New Song" : "Edit Song");
+      stage.initModality(Modality.APPLICATION_MODAL);
+      stage.initOwner(tblSong.getScene().getWindow());
+      stage.setScene(new Scene(root));
+      stage.showAndWait();
+
+      return dialog.getResult();
+    } catch (Exception e) {
+      displayError(e);
+      return null;
+    }
+  }
 
     @FXML
     private void handleDeleteSong(ActionEvent actionEvent) {

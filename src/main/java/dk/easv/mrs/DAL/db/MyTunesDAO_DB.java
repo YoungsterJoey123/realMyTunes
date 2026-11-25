@@ -82,7 +82,7 @@ public class MyTunesDAO_DB implements IMyTunesDataAccess {
 
     @Override
     public void editSong(Song song) throws Exception {
-        String sql = "UPDATE Songs SET Title = ?, Artist = ?, Genre = ?, Playtime = ? WHERE Id = ?";
+        String sql = "UPDATE Songs SET Title = ?, Artist = ?, Genre = ?, Playtime = ?, FilePath = ? WHERE Id = ?";
 
         try (Connection conn = dbConnector.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -92,7 +92,8 @@ public class MyTunesDAO_DB implements IMyTunesDataAccess {
             stmt.setString(2, song.getArtist());
             stmt.setString(3, song.getGenre());
             stmt.setInt(4, song.getPlaytime());
-            stmt.setInt(5, song.getId());
+            stmt.setString(5, song.getFilePath());
+            stmt.setInt(6, song.getId());
 
             // Run the specified SQL statement
             stmt.executeUpdate();
