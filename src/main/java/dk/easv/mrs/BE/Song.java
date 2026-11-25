@@ -55,10 +55,8 @@ public class Song {
     }
 
 
-
     @Override
-    public String toString()
-    {
-        return id + ": " + title + artist + genre + playtime;
+    public String toString() {
+        return title + " - " + artist;
     }
 }

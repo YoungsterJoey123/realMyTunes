@@ -18,32 +18,22 @@ import dk.easv.mrs.GUI.Model.MyTunesModel;
 
 public class MyTunesViewController implements Initializable {
 
-
     @FXML private TableView<Song> tblSong;
-    @FXML private TableColumn<Song, String> colTitle;
-    @FXML private TableColumn<Song, String> colArtist;
-    @FXML private TableColumn<Song, String> colGenre;
+    @FXML private TableColumn<Song, String> colTitle, colGenre, colArtist;
     @FXML private TableColumn<Song, Integer> colPlaytime;
 
     @FXML private TableView<Playlist> tblPlaylist;
-    @FXML private TableColumn<Playlist, String> colPlaylistName;
-    @FXML private TableColumn<Playlist, String> colPlaylistSongs;
+    @FXML private TableColumn<Playlist, String> colPlaylistName, colPlaylistSongs;
     @FXML private TableColumn<Playlist, Integer> colPlaylistTime;
 
+    //@FXML private TableView<Song> tblPlaylistSongs;
+    //@FXML private TableColumn<Song, String> colPlaylistSongTitle, colPlaylistSongArtist;
     @FXML private ListView<Song> tblPlaylistSongs;
-    @FXML private TableColumn<Song, String> colPlaylistSongTitle;
-    @FXML private TableColumn<Song, String> colPlaylistSongArtist;
 
-    @FXML private TextField txtSongSearch;
-    @FXML private TextField txtSongTitle;
-    @FXML private TextField txtSongArtist;
-    @FXML private TextField txtSongGenre;
-    @FXML private TextField txtSongPlaytime;
-
-    @FXML private Button btnNewSong;
-    @FXML private Button btnEdit;
-    @FXML private Button btnDelete;
-    @FXML private Button btnNewPlaylist;
+    @FXML private TextField txtSongSearch, txtSongTitle, txtSongArtist, txtSongGenre, txtSongPlaytime;
+    
+    @FXML private Button btnNewSong, btnEdit, btnDelete, btnNewPlaylist, btnEditPlaylist, btnDeletePlaylist, btnDeleteFromPlaylist, btnAddToPlaylist;
+   
 
     private MyTunesModel myTunesModel;
 
@@ -93,6 +83,27 @@ public class MyTunesViewController implements Initializable {
                 txtSongArtist.setText(newValue.getArtist());
                 txtSongGenre.setText(newValue.getGenre());
                 txtSongPlaytime.setText(String.valueOf(newValue.getPlaytime()));
+            }
+        });
+
+        // playlists table
+        colPlaylistName.setCellValueFactory(new PropertyValueFactory<>("name"));
+        colPlaylistSongs.setCellValueFactory(new PropertyValueFactory<>("songCount"));
+        colPlaylistTime.setCellValueFactory(new PropertyValueFactory<>("playlistTime"));
+        tblPlaylist.setItems(myTunesModel.getObservablePlaylists());
+
+        // songs on the selected playlist
+        //colPlaylistSongTitle.setCellValueFactory(new PropertyValueFactory<>("title"));
+        //colPlaylistSongArtist.setCellValueFactory(new PropertyValueFactory<>("artist"));
+        tblPlaylistSongs.setItems(myTunesModel.getObservablePlaylistSongs());
+
+        tblPlaylist.getSelectionModel().selectedItemProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue != null) {
+                try {
+                    myTunesModel.loadSongsOnPlaylist(newValue);
+                } catch (Exception e) {
+                    displayError(e);
+                }
             }
         });
     }
@@ -157,31 +168,59 @@ public class MyTunesViewController implements Initializable {
             }
         }
     }
+
     @FXML
     private void handleNewPlaylist(ActionEvent actionEvent) {
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("New Playlist");
+        dialog.setHeaderText("Name your playlist");
+        dialog.setContentText("Name:");
+
+        dialog.showAndWait().ifPresent(name -> {
+            if (!name.isBlank()) {
+                try {
+                    myTunesModel.createPlaylist(name.trim());
+                } catch (Exception e) {
+                    displayError(e);
+                }
+            }
+        });
     }
-    @FXML
-    private void handleRewindClick(ActionEvent actionEvent) {
-    }
-    @FXML
-    private void handlePauseClick(ActionEvent actionEvent) {
-    }
-    @FXML
-    private void handleSkipClick(ActionEvent actionEvent) {
-    }
-    @FXML
-    private void handleSearchClick(ActionEvent actionEvent) {
-    }
-    @FXML
-    private void handleUpdatePlaylist(ActionEvent actionEvent) {
-    }
-    @FXML
-    private void handleDeletePlaylist(ActionEvent actionEvent) {
-    }
-    @FXML
-    private void handleDeleteFromPlaylist(ActionEvent actionEvent) {
-    }
+
     @FXML
     private void handleAddClick(ActionEvent actionEvent) {
+        Playlist selectedPlaylist = tblPlaylist.getSelectionModel().getSelectedItem();
+        Song selectedSong = tblSong.getSelectionModel().getSelectedItem();
+
+        if (selectedPlaylist != null && selectedSong != null) {
+            try {
+                myTunesModel.addSongToPlaylist(selectedPlaylist, selectedSong);
+                tblPlaylist.refresh();   // updates the Songs and Time columns
+            } catch (Exception e) {
+                displayError(e);
+            }
+        }
     }
+
+    public void handleRewindClick(ActionEvent actionEvent) {
+    }
+
+    public void handlePauseClick(ActionEvent actionEvent) {
+    }
+
+    public void handleSkipClick(ActionEvent actionEvent) {
+    }
+
+    public void handleSearchClick(ActionEvent actionEvent) {
+    }
+
+    public void handleUpdatePlaylist(ActionEvent actionEvent) {
+    }
+
+    public void handleDeletePlaylist(ActionEvent actionEvent) {
+    }
+
+    public void handleDeleteFromPlaylist(ActionEvent actionEvent) {
+    }
+
 }

@@ -1,49 +1,83 @@
-package dk.easv.mrs.GUI.Model;
+    package dk.easv.mrs.GUI.Model;
 
-import dk.easv.mrs.BE.Song;
-import dk.easv.mrs.BLL.SongManager;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.collections.transformation.FilteredList;
+    import dk.easv.mrs.BE.Playlist;
+    import dk.easv.mrs.BE.Song;
+    import dk.easv.mrs.BLL.PlaylistManager;
+    import dk.easv.mrs.BLL.SongManager;
 
-import java.util.List;
+    import javafx.collections.FXCollections;
+    import javafx.collections.ObservableList;
+    import javafx.collections.transformation.FilteredList;
 
-public class MyTunesModel {
+    import java.util.List;
 
-    private FilteredList<Song> filteredList;
-    private ObservableList<Song> songsToBeViewed;
+    public class MyTunesModel {
 
-    private SongManager songManager;
+        private FilteredList<Song> filteredList;
+        private ObservableList<Song> songsToBeViewed;
+        private ObservableList<Playlist> playlists;
+        private ObservableList<Song> playlistSongs;
+        private PlaylistManager playlistManager;
 
-    public MyTunesModel() throws Exception {
-        songManager = new SongManager();
-        songsToBeViewed = FXCollections.observableArrayList();
-        songsToBeViewed.addAll(songManager.getAllSongs());
-        filteredList = new FilteredList<>(songsToBeViewed);
+        private SongManager songManager;
+
+        public MyTunesModel() throws Exception {
+            songManager = new SongManager();
+            songsToBeViewed = FXCollections.observableArrayList();
+            songsToBeViewed.addAll(songManager.getAllSongs());
+            filteredList = new FilteredList<>(songsToBeViewed);
+            playlistManager = new PlaylistManager();
+            playlists = FXCollections.observableArrayList(playlistManager.getAllPlaylists());
+            playlistSongs = FXCollections.observableArrayList();
+        }
+
+        public FilteredList<Song> getObservableSongs() {
+            return filteredList;
+        }
+
+        public void searchSong(String query) throws Exception {
+            List<Song> searchResults = songManager.searchSong(query);   // was searchSongs
+            songsToBeViewed.clear();
+            songsToBeViewed.addAll(searchResults);
+        }
+
+        public void createSong(Song newSong) throws Exception {
+            Song createdSong = songManager.createSong(newSong);
+            songsToBeViewed.add(createdSong);
+        }
+
+        public void editSong(Song editedSong) throws Exception {
+            songManager.editSong(editedSong);                          // was updateSong
+            songsToBeViewed.set(songsToBeViewed.indexOf(editedSong), editedSong);
+        }
+
+        public void deleteSong(Song selectedSong) throws Exception {
+            songManager.deleteSong(selectedSong);
+            songsToBeViewed.remove(selectedSong);
+        }
+
+        public ObservableList<Playlist> getObservablePlaylists() {
+            return playlists;
+        }
+
+        public ObservableList<Song> getObservablePlaylistSongs() {
+            return playlistSongs;
+        }
+
+        public void createPlaylist(String name) throws Exception {
+            playlists.add(playlistManager.createPlaylist(name));
+        }
+
+        public void loadSongsOnPlaylist(Playlist playlist) throws Exception {
+            playlistSongs.setAll(playlistManager.getSongsOnPlaylist(playlist));
+        }
+
+        public void addSongToPlaylist(Playlist playlist, Song song) throws Exception {
+            playlistManager.addSongToPlaylist(playlist, song);
+
+            // keep the GUI in sync without reloading from the database
+            playlist.setSongCount(playlist.getSongCount() + 1);
+            playlist.setPlaylistTime(playlist.getPlaylistTime() + song.getPlaytime());
+            playlistSongs.add(song);
+        }
     }
-
-    public FilteredList<Song> getObservableSongs() {
-        return filteredList;
-    }
-
-    public void searchSong(String query) throws Exception {
-        List<Song> searchResults = songManager.searchSong(query);   // was searchSongs
-        songsToBeViewed.clear();
-        songsToBeViewed.addAll(searchResults);
-    }
-
-    public void createSong(Song newSong) throws Exception {
-        Song createdSong = songManager.createSong(newSong);
-        songsToBeViewed.add(createdSong);
-    }
-
-    public void editSong(Song editedSong) throws Exception {
-        songManager.editSong(editedSong);                          // was updateSong
-        songsToBeViewed.set(songsToBeViewed.indexOf(editedSong), editedSong);
-    }
-
-    public void deleteSong(Song selectedSong) throws Exception {
-        songManager.deleteSong(selectedSong);
-        songsToBeViewed.remove(selectedSong);
-    }
-}

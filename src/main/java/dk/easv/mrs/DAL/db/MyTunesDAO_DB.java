@@ -115,10 +115,10 @@ public class MyTunesDAO_DB implements IMyTunesDataAccess {
         List<Playlist> playlists = new ArrayList<>();
 
         String sql = "SELECT p.Id, p.Name, COUNT(ps.SongId) AS SongCount, " +
-                "ISNULL(SUM(s.[Time]), 0) AS TotalTime " +
+                "ISNULL(SUM(s.Playtime), 0) AS PlaylistTime " +
                 "FROM Playlist p " +
                 "LEFT JOIN PlaylistSong ps ON ps.PlaylistId = p.Id " +
-                "LEFT JOIN Song s ON s.Id = ps.SongId " +
+                "LEFT JOIN Songs s ON s.Id = ps.SongId " +
                 "GROUP BY p.Id, p.Name";
 
         try (Connection conn = dbConnector.getConnection();
@@ -130,7 +130,7 @@ public class MyTunesDAO_DB implements IMyTunesDataAccess {
                         rs.getInt("Id"),
                         rs.getString("Name"),
                         rs.getInt("SongCount"),
-                        rs.getInt("TotalTime")));
+                        rs.getInt("PlaylistTime")));
             }
         }
         return playlists;
@@ -159,7 +159,7 @@ public class MyTunesDAO_DB implements IMyTunesDataAccess {
     public List<Song> getSongsOnPlaylist(int playlistId) throws Exception {
         List<Song> songs = new ArrayList<>();
 
-        String sql = "SELECT s.* FROM Song s " +
+        String sql = "SELECT s.* FROM Songs s " +
                 "JOIN PlaylistSong ps ON ps.SongId = s.Id " +
                 "WHERE ps.PlaylistId = ? " +
                 "ORDER BY ps.Id";
@@ -176,7 +176,7 @@ public class MyTunesDAO_DB implements IMyTunesDataAccess {
                         rs.getString("Title"),
                         rs.getString("Artist"),
                         rs.getString("Genre"),
-                        rs.getInt("Time")));
+                        rs.getInt("Playtime")));
             }
         }
         return songs;
