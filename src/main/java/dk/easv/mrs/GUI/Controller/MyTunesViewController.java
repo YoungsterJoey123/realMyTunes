@@ -36,7 +36,7 @@ public class MyTunesViewController implements Initializable {
     @FXML private ListView<Song> tblPlaylistSongs;
 
     @FXML private TextField txtSongSearch, txtSongTitle, txtSongArtist, txtSongGenre, txtSongPlaytime;
-    @FXML private Button btnNewSong, btnEdit, btnDelete, btnNewPlaylist, btnEditPlaylist, btnDeletePlaylist, btnDeleteFromPlaylist, btnAddToPlaylist, btnRewind, btnPause, btnSkip, btnSearch;
+    @FXML private Button btnNewSong, btnEdit, btnDelete, btnNewPlaylist, btnEditPlaylist, btnDeletePlaylist, btnDeleteFromPlaylist, btnAddToPlaylist, btnRewind, btnPause, btnSkip;
     @FXML private Label lblSongName, lblArtist, lblTimePassed, lblTimeLeft;
 
     @FXML private Slider sldSongLength, sldVolume;
@@ -277,9 +277,6 @@ public class MyTunesViewController implements Initializable {
     }
 
     public void handleSkipClick(ActionEvent actionEvent) {
-    }
-
-    public void handleSearchClick(ActionEvent actionEvent) {
     }
 
     public void handleUpdatePlaylist(ActionEvent actionEvent) {

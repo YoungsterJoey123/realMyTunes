@@ -39,7 +39,6 @@
             <Label prefHeight="17.0" prefWidth="32.0" text="🔊" />
             <Slider fx:id="sldVolume" />
             <TextField fx:id="txtSongSearch" prefHeight="25.0" prefWidth="187.0" promptText="Search..." />
-            <Button fx:id="btnSearch" mnemonicParsing="false" onAction="#handleSearchClick" prefHeight="25.0" prefWidth="77.0" text="Search" />
          </children>
       </HBox>
    </top>
