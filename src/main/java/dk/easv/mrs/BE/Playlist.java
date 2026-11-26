@@ -30,6 +30,9 @@ public class Playlist {
     }
 
 
+    public void setName(String name) {
+        this.name = name;
+    }
     public void setSongCount(int songCount) {
         this.songCount = songCount;
     }

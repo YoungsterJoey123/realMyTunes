@@ -31,4 +31,16 @@ public class PlaylistManager {
     public void addSongToPlaylist(Playlist playlist, Song song) throws Exception {
         myTunesDAO.addSongToPlaylist(playlist.getId(), song.getId());
     }
+
+    public void editPlaylist(Playlist playlist, String newName) throws Exception {
+        myTunesDAO.updatePlaylist(playlist.getId(), newName);
+    }
+
+    public void deletePlaylist(Playlist playlist) throws Exception {
+        myTunesDAO.deletePlaylist(playlist.getId());
+    }
+
+    public void saveSongOrder(Playlist playlist, List<Song> songs) throws Exception {
+        myTunesDAO.saveSongOrder(playlist.getId(), songs);
+    }
 }

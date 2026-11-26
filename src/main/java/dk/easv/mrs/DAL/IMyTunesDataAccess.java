@@ -22,4 +22,10 @@ public interface IMyTunesDataAccess {
 
     void addSongToPlaylist(int playlistId, int songId) throws Exception;
 
+    void updatePlaylist(int playlistId, String name) throws Exception;
+
+    void deletePlaylist(int playlistId) throws Exception;
+
+    void saveSongOrder(int playlistId, List<Song> songs) throws Exception;
+
 }

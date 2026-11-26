@@ -36,12 +36,11 @@ public class MyTunesViewController implements Initializable {
     @FXML private TableColumn<Playlist, String> colPlaylistName, colPlaylistSongs;
     @FXML private TableColumn<Playlist, Integer> colPlaylistTime;
 
-    //@FXML private TableView<Song> tblPlaylistSongs;
-    //@FXML private TableColumn<Song, String> colPlaylistSongTitle, colPlaylistSongArtist;
     @FXML private ListView<Song> tblPlaylistSongs;
 
     @FXML private TextField txtSongSearch;
-    @FXML private Button btnNewSong, btnEditSong, btnDeleteSong, btnNewPlaylist, btnEditPlaylist, btnDeletePlaylist, btnDeleteFromPlaylist, btnAddToPlaylist, btnRewind, btnPause, btnSkip;
+    @FXML private Button btnNewSong, btnEditSong, btnDeleteSong, btnNewPlaylist, btnEditPlaylist, btnDeletePlaylist, btnDeleteFromPlaylist, btnAddToPlaylist, btnRewind, btnPause, btnSkip, btnMoveDown, btnMoveUp;
+
     @FXML private Label lblSongName, lblArtist, lblTimePassed, lblTimeLeft;
 
     @FXML private Slider sldSongLength, sldVolume;
@@ -257,6 +256,63 @@ public class MyTunesViewController implements Initializable {
         }
     }
 
+    @FXML
+    private void handleUpdatePlaylist(ActionEvent e) {
+        Playlist selected = tblPlaylist.getSelectionModel().getSelectedItem();
+        if (selected == null) return;
+
+        TextInputDialog dialog = new TextInputDialog(selected.getName());
+        dialog.setTitle("Edit Playlist");
+        dialog.setHeaderText("Rename your playlist");
+        dialog.setContentText("Name:");
+        dialog.showAndWait().ifPresent(name -> {
+            if (name.isBlank()) return;
+            try {
+                myTunesModel.editPlaylist(selected, name.trim());
+                tblPlaylist.refresh();
+            } catch (Exception ex) { displayError(ex); }
+        });
+    }
+
+    @FXML
+    private void handleDeletePlaylist(ActionEvent e) {
+        Playlist selected = tblPlaylist.getSelectionModel().getSelectedItem();
+        if (selected == null) return;
+
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
+                "Delete playlist \"" + selected.getName() + "\"? The songs themselves are not deleted.",
+                ButtonType.OK, ButtonType.CANCEL);
+        confirm.setHeaderText("Are you sure?");
+        if (confirm.showAndWait().orElse(ButtonType.CANCEL) != ButtonType.OK) return;
+        try {
+            myTunesModel.deletePlaylist(selected);
+        } catch (Exception ex) { displayError(ex); }
+    }
+
+    @FXML
+    private void handleDeleteFromPlaylist(ActionEvent e) {
+        Playlist playlist = tblPlaylist.getSelectionModel().getSelectedItem();
+        int index = tblPlaylistSongs.getSelectionModel().getSelectedIndex();
+        if (playlist == null || index < 0) return;
+        try {
+            myTunesModel.removeSongFromPlaylist(playlist, index);
+            tblPlaylist.refresh();
+        } catch (Exception ex) { displayError(ex); }
+    }
+
+    @FXML private void handleMoveUp(ActionEvent e)   { moveSelectedSong(-1); }
+    @FXML private void handleMoveDown(ActionEvent e) { moveSelectedSong(1); }
+
+    private void moveSelectedSong(int offset) {
+        Playlist playlist = tblPlaylist.getSelectionModel().getSelectedItem();
+        int index = tblPlaylistSongs.getSelectionModel().getSelectedIndex();
+        if (playlist == null || index < 0) return;
+        try {
+            myTunesModel.moveSongInPlaylist(playlist, index, offset);
+            tblPlaylistSongs.getSelectionModel().select(index + offset);  // keep the song selected
+        } catch (Exception ex) { displayError(ex); }
+    }
+
     public void handleRewindClick(ActionEvent actionEvent) {
     }
 
@@ -266,13 +322,7 @@ public class MyTunesViewController implements Initializable {
     public void handleSkipClick(ActionEvent actionEvent) {
     }
 
-    public void handleUpdatePlaylist(ActionEvent actionEvent) {
-    }
 
-    public void handleDeletePlaylist(ActionEvent actionEvent) {
-    }
 
-    public void handleDeleteFromPlaylist(ActionEvent actionEvent) {
-    }
 
 }

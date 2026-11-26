@@ -198,4 +198,55 @@ public class MyTunesDAO_DB implements IMyTunesDataAccess {
             stmt.executeUpdate();
         }
     }
+
+    @Override
+    public void updatePlaylist(int playlistId, String name) throws Exception {
+        String sql = "UPDATE Playlist SET Name = ? WHERE Id = ?";
+        try (Connection conn = dbConnector.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, name);
+            stmt.setInt(2, playlistId);
+            stmt.executeUpdate();
+        }
+    }
+
+    @Override
+    public void deletePlaylist(int playlistId) throws Exception {
+        try (Connection conn = dbConnector.getConnection()) {
+            conn.setAutoCommit(false);
+            try (PreparedStatement links = conn.prepareStatement("DELETE FROM PlaylistSong WHERE PlaylistId = ?");
+                 PreparedStatement list = conn.prepareStatement("DELETE FROM Playlist WHERE Id = ?")) {
+                links.setInt(1, playlistId);
+                links.executeUpdate();          // only the links, the songs stay
+                list.setInt(1, playlistId);
+                list.executeUpdate();
+                conn.commit();
+            } catch (Exception e) {
+                conn.rollback();
+                throw e;
+            }
+        }
+    }
+
+    /** Replaces the playlist's content with the given songs, in the given order. */
+    @Override
+    public void saveSongOrder(int playlistId, List<Song> songs) throws Exception {
+        try (Connection conn = dbConnector.getConnection()) {
+            conn.setAutoCommit(false);
+            try (PreparedStatement del = conn.prepareStatement("DELETE FROM PlaylistSong WHERE PlaylistId = ?");
+                 PreparedStatement ins = conn.prepareStatement("INSERT INTO PlaylistSong (PlaylistId, SongId) VALUES (?, ?)")) {
+                del.setInt(1, playlistId);
+                del.executeUpdate();
+                for (Song song : songs) {
+                    ins.setInt(1, playlistId);
+                    ins.setInt(2, song.getId());
+                    ins.executeUpdate();
+                }
+                conn.commit();
+            } catch (Exception e) {
+                conn.rollback();
+                throw e;
+            }
+        }
+    }
 }

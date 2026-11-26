@@ -91,6 +91,8 @@
                      </padding>
                      <children>
                         <Button fx:id="btnDeleteFromPlaylist" mnemonicParsing="false" onAction="#handleDeleteFromPlaylist" text="Delete" />
+                        <Button fx:id="btnMoveUp" mnemonicParsing="false" onAction="#handleMoveUp" text="↑" />
+                        <Button fx:id="btnMoveDown" mnemonicParsing="false" onAction="#handleMoveDown" text="↓" />
                      </children>
                   </HBox>
                </children>

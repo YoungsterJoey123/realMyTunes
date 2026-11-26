@@ -9,6 +9,8 @@
     import javafx.collections.ObservableList;
     import javafx.collections.transformation.FilteredList;
 
+    import java.util.ArrayList;
+    import java.util.Collections;
     import java.util.List;
 
     public class MyTunesModel {
@@ -91,5 +93,34 @@
             playlist.setSongCount(playlist.getSongCount() + 1);
             playlist.setPlaylistTime(playlist.getPlaylistTime() + song.getPlaytime());
             playlistSongs.add(song);
+        }
+
+        public void editPlaylist(Playlist playlist, String newName) throws Exception {
+            playlistManager.editPlaylist(playlist, newName);
+            playlist.setName(newName);
+        }
+
+        public void deletePlaylist(Playlist playlist) throws Exception {
+            playlistManager.deletePlaylist(playlist);
+            playlists.remove(playlist);
+            playlistSongs.clear();
+        }
+
+        public void removeSongFromPlaylist(Playlist playlist, int index) throws Exception {
+            List<Song> newOrder = new ArrayList<>(playlistSongs);
+            Song removed = newOrder.remove(index);
+            playlistManager.saveSongOrder(playlist, newOrder);   // database first
+            playlistSongs.remove(index);                         // then the GUI
+            playlist.setSongCount(playlist.getSongCount() - 1);
+            playlist.setPlaylistTime(playlist.getPlaylistTime() - removed.getPlaytime());
+        }
+
+        public void moveSongInPlaylist(Playlist playlist, int index, int offset) throws Exception {
+            int newIndex = index + offset;
+            if (newIndex < 0 || newIndex >= playlistSongs.size()) return;
+            List<Song> newOrder = new ArrayList<>(playlistSongs);
+            Collections.swap(newOrder, index, newIndex);
+            playlistManager.saveSongOrder(playlist, newOrder);
+            Collections.swap(playlistSongs, index, newIndex);
         }
     }
