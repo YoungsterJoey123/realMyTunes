@@ -1,5 +1,9 @@
 package dk.easv.mrs.BE;
 
+/**
+ * A song in the library. Playtime is in seconds, and filePath is relative to
+ * the application folder (for example "music/song.mp3").
+ */
 public class Song {
 
     private int id;

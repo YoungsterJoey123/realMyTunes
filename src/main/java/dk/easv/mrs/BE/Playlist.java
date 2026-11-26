@@ -1,7 +1,9 @@
 package dk.easv.mrs.BE;
 
-import java.util.List;
-
+/**
+ * A playlist as shown in the playlist table. The songs themselves are loaded
+ * separately. songCount and playlistTime (seconds) are totals for the whole playlist.
+ */
 public class Playlist {
 
     private int id;

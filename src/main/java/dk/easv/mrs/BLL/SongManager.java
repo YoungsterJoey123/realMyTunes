@@ -7,6 +7,7 @@ import dk.easv.mrs.DAL.db.MyTunesDAO_DB;
 import java.io.IOException;
 import java.util.List;
 
+/** Business layer for songs. Handles song operations and filter matching, and uses the data access layer. */
 public class SongManager {
 
     private SongSearcher songSearcher = new SongSearcher();

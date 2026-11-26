@@ -12,6 +12,10 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Data access layer. Implements IMyTunesDataAccess against SQL Server using JDBC.
+ * Multi-step changes (deleting a song or playlist, saving song order) run in a transaction.
+ */
 public class MyTunesDAO_DB implements IMyTunesDataAccess {
 
     private DBConnector dbConnector = new DBConnector();

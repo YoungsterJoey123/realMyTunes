@@ -13,6 +13,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * GUI model. Holds the observable lists the views are bound to and keeps them
+ * in sync with the database through the business layer.
+ */
 public class MyTunesModel
 {
 

@@ -5,12 +5,13 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+/** Starts the MyTunes application. */
 public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
         Parent root = FXMLLoader.load(getClass().getResource("/views/MyTunesView.fxml"));
-        primaryStage.setTitle("MRS");
+        primaryStage.setTitle("MyTunes");
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
     }

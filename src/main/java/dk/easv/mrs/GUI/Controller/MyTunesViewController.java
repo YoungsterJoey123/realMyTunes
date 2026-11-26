@@ -24,8 +24,8 @@ import java.util.ResourceBundle;
 
 // project imports
 import dk.easv.mrs.GUI.Model.MyTunesModel;
-import javafx.stage.FileChooser;
 
+/** Controller for the main window: song and playlist tables, filter and player controls. */
 public class MyTunesViewController implements Initializable
 {
 
@@ -34,7 +34,8 @@ public class MyTunesViewController implements Initializable
   @FXML private TableColumn<Song, Integer> colPlaytime;
 
   @FXML private TableView<Playlist> tblPlaylist;
-  @FXML private TableColumn<Playlist, String> colPlaylistName, colPlaylistSongs;
+  @FXML private TableColumn<Playlist, String> colPlaylistName;
+  @FXML private TableColumn<Playlist, Integer> colPlaylistSongs;
   @FXML private TableColumn<Playlist, Integer> colPlaylistTime;
 
   @FXML private ListView<Song> tblPlaylistSongs;
@@ -181,8 +182,6 @@ public class MyTunesViewController implements Initializable
     tblPlaylist.setItems(myTunesModel.getObservablePlaylists());
 
     // songs on the selected playlist
-    //colPlaylistSongTitle.setCellValueFactory(new PropertyValueFactory<>("title"));
-    //colPlaylistSongArtist.setCellValueFactory(new PropertyValueFactory<>("artist"));
     tblPlaylistSongs.setItems(myTunesModel.getObservablePlaylistSongs());
     txtSongSearch.setOnAction(this::handleFilterClick);
 
@@ -414,22 +413,18 @@ public class MyTunesViewController implements Initializable
     moveSelectedSong(1);
   }
 
-  private void moveSelectedSong(int offset)
-  {
+  private void moveSelectedSong(int offset) {
     Playlist playlist = tblPlaylist.getSelectionModel().getSelectedItem();
     int index = tblPlaylistSongs.getSelectionModel().getSelectedIndex();
-    if (playlist == null || index < 0)
-      return;
-    try
-    {
+    if (playlist == null || index < 0) return;
+
+    int newIndex = index + offset;
+    if (newIndex < 0 || newIndex >= tblPlaylistSongs.getItems().size()) return;   // already first or last
+
+    try {
       myTunesModel.moveSongInPlaylist(playlist, index, offset);
-      tblPlaylistSongs.getSelectionModel()
-          .select(index + offset);  // keep the song selected
-    }
-    catch (Exception ex)
-    {
-      displayError(ex);
-    }
+      tblPlaylistSongs.getSelectionModel().select(newIndex);  // keep the song selected
+    } catch (Exception ex) { displayError(ex); }
   }
 
   public void handleRewindClick(ActionEvent actionEvent)

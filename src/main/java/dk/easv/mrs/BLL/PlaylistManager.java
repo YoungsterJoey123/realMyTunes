@@ -8,6 +8,7 @@ import dk.easv.mrs.DAL.db.MyTunesDAO_DB;
 import java.io.IOException;
 import java.util.List;
 
+/** Business layer for playlists. Passes playlist operations from the GUI model to the data access layer. */
 public class PlaylistManager {
 
     private IMyTunesDataAccess myTunesDAO;

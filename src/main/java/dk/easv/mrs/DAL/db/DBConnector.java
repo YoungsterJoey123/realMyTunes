@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.util.Properties;
 
+/** Creates database connections from the settings in config/database.settings (not committed to Git). */
 public class DBConnector {
 
     private static final String PROP_FILE = "config/database.settings";
