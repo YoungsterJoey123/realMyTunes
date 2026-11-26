@@ -106,14 +106,21 @@ public class MyTunesViewController implements Initializable
   }
 
   /*
-  formats seconds into minutes:seconds
-  s / 60 returns how many times s can be divided into minutes
-  s % 60 returns how many seconds are left after dividing into minutes
-   */
-  private String formatTime(double seconds)
-  {
-    int s = (int) seconds;
-    return String.format("%d:%02d", s / 60, s % 60);
+    formats seconds into h:mm:ss, or m:ss when under an hour
+    s / 3600 is the number of whole hours
+    (s % 3600) / 60 is the minutes left after removing the hours
+    s % 60 is the seconds left after removing the minutes
+     */
+  private String formatTime(double seconds) {
+    int s = (int) Math.max(0, seconds);   // never show a negative time
+    int hours = s / 3600;
+    int minutes = (s % 3600) / 60;
+    int secs = s % 60;
+
+    if (hours > 0) {
+      return String.format("%d:%02d:%02d", hours, minutes, secs);
+    }
+    return String.format("%d:%02d", minutes, secs);
   }
 
   @FXML private void handleFilterClick(ActionEvent actionEvent)
@@ -144,6 +151,13 @@ public class MyTunesViewController implements Initializable
     colArtist.setCellValueFactory(new PropertyValueFactory<>("artist"));
     colGenre.setCellValueFactory(new PropertyValueFactory<>("genre"));
     colPlaytime.setCellValueFactory(new PropertyValueFactory<>("playtime"));
+    colPlaytime.setCellFactory(col -> new TableCell<>() {
+      @Override
+      protected void updateItem(Integer seconds, boolean empty) {
+        super.updateItem(seconds, empty);
+        setText(empty || seconds == null ? null : formatTime(seconds));
+      }
+    });
 
     // connect tableview to the list (filtered, then sorted)
     SortedList<Song> sortedData = new SortedList<>(
@@ -157,6 +171,13 @@ public class MyTunesViewController implements Initializable
         new PropertyValueFactory<>("songCount"));
     colPlaylistTime.setCellValueFactory(
         new PropertyValueFactory<>("playlistTime"));
+    colPlaylistTime.setCellFactory(col -> new TableCell<>() {
+      @Override
+      protected void updateItem(Integer seconds, boolean empty) {
+        super.updateItem(seconds, empty);
+        setText(empty || seconds == null ? null : formatTime(seconds));
+      }
+    });
     tblPlaylist.setItems(myTunesModel.getObservablePlaylists());
 
     // songs on the selected playlist
@@ -166,7 +187,7 @@ public class MyTunesViewController implements Initializable
     txtSongSearch.setOnAction(this::handleFilterClick);
 
     tblPlaylist.getSelectionModel().selectedItemProperty()
-        .addListener((obs, oldValue, newValue) -> {
+         .addListener((obs, oldValue, newValue) -> {
           if (newValue != null)
           {
             try
