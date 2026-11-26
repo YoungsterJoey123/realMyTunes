@@ -20,10 +20,9 @@ public class SongManager {
         return myTunesDAO.getAllSongs();
     }
 
-    public List<Song> searchSong(String query) throws Exception {
-        List<Song> allSongs = getAllSongs();
-        return songSearcher.search(allSongs, query);
-    }
+    public boolean matches(Song song, String query) {
+        return songSearcher.matches(song, query);
+     }
 
     public Song createSong(Song newSong) throws Exception {
         return myTunesDAO.createSong(newSong);
