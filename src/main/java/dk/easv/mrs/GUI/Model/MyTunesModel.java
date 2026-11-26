@@ -65,10 +65,21 @@
         }
       }
 
-        public void deleteSong(Song selectedSong) throws Exception {
-            songManager.deleteSong(selectedSong);
-            songsToBeViewed.remove(selectedSong);
+      public void deleteSong(Song selectedSong) throws Exception {
+        songManager.deleteSong(selectedSong);
+        songsToBeViewed.remove(selectedSong);
+        playlistSongs.removeIf(s -> s.getId() == selectedSong.getId());
+
+        // refresh song count and total time of every playlist
+        for (Playlist fresh : playlistManager.getAllPlaylists()) {
+          for (Playlist p : playlists) {
+            if (p.getId() == fresh.getId()) {
+              p.setSongCount(fresh.getSongCount());
+              p.setPlaylistTime(fresh.getPlaylistTime());
+            }
+          }
         }
+      }
 
         public ObservableList<Playlist> getObservablePlaylists() {
             return playlists;

@@ -100,18 +100,29 @@ public class MyTunesDAO_DB implements IMyTunesDataAccess {
         }
     }
 
-    @Override
-    public void deleteSong(Song song) throws Exception {
-        String sql = "DELETE FROM Songs WHERE Id = ?";
+   @Override
+   public void deleteSong(Song song) throws Exception {
+     String deleteLinks = "DELETE FROM PlaylistSong WHERE SongId = ?";
+     String deleteSong  = "DELETE FROM Songs WHERE Id = ?";
 
-        try (Connection conn = dbConnector.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+     try (Connection conn = dbConnector.getConnection()) {
+       conn.setAutoCommit(false);
+       try (PreparedStatement links = conn.prepareStatement(deleteLinks);
+           PreparedStatement songs = conn.prepareStatement(deleteSong)) {
 
-            stmt.setInt(1, song.getId());
+         links.setInt(1, song.getId());
+         links.executeUpdate();          // remove the song from all playlists
 
-            stmt.executeUpdate();
-        }
-    }
+         songs.setInt(1, song.getId());
+         songs.executeUpdate();          // then delete the song itself
+
+         conn.commit();
+       } catch (Exception e) {
+         conn.rollback();
+         throw e;
+       }
+     }
+   }
 
     @Override
     public List<Playlist> getAllPlaylists() throws Exception {

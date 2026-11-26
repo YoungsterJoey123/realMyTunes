@@ -210,18 +210,24 @@ public class MyTunesViewController implements Initializable {
     }
   }
 
-    @FXML
-    private void handleDeleteSong(ActionEvent actionEvent) {
-        Song selectedSong = tblSong.getSelectionModel().getSelectedItem();
+  @FXML
+  private void handleDeleteSong(ActionEvent actionEvent) {
+    Song selectedSong = tblSong.getSelectionModel().getSelectedItem();
+    if (selectedSong == null) return;
 
-        if (selectedSong != null) {
-            try {
-                myTunesModel.deleteSong(selectedSong);
-            } catch (Exception err) {
-                displayError(err);
-            }
-        }
+    Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
+        "Delete \"" + selectedSong + "\"? It will also be removed from all playlists.",
+        ButtonType.YES, ButtonType.NO);
+    confirm.setHeaderText("Delete song");
+    if (confirm.showAndWait().orElse(ButtonType.NO) != ButtonType.YES) return;
+
+    try {
+      myTunesModel.deleteSong(selectedSong);
+      tblPlaylist.refresh();   // redraws the Songs and Time columns
+    } catch (Exception err) {
+      displayError(err);
     }
+  }
 
     @FXML
     private void handleNewPlaylist(ActionEvent actionEvent) {
