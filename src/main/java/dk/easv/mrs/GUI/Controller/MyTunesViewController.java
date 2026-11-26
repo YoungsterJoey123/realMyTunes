@@ -50,6 +50,8 @@ public class MyTunesViewController implements Initializable
 
   private MyTunesModel myTunesModel;
   private MediaPlayer mediaPlayer;
+  private Song currentSong;
+  private Song selectedSong;
   private boolean filterActive = false;
 
   public MyTunesViewController()
@@ -64,48 +66,6 @@ public class MyTunesViewController implements Initializable
       e.printStackTrace();
     }
   }
-
-  private void playSong(Song song)
-  {
-    if (song == null || song.getFilePath() == null)
-      return;
-
-    // stop and release the previous song
-    if (mediaPlayer != null)
-    {
-      mediaPlayer.stop();
-      mediaPlayer.dispose();
-    }
-
-    File file = new File(song.getFilePath());
-    if (!file.exists())
-    {
-      System.out.println("File not found: " + file.getAbsolutePath());
-      return;
-    }
-
-    Media media = new Media(file.toURI().toString());
-    mediaPlayer = new MediaPlayer(media);
-
-    lblSongName.setText(song.getTitle());
-    lblArtist.setText(song.getArtist());
-    mediaPlayer.setVolume(sldVolume.getValue());
-
-    mediaPlayer.setOnReady(
-        () -> sldSongLength.setMax(media.getDuration().toSeconds()));
-
-    mediaPlayer.currentTimeProperty().addListener((obs, old, now) -> {
-      if (!sldSongLength.isValueChanging())
-      {
-        sldSongLength.setValue(now.toSeconds());
-      }
-      lblTimePassed.setText(formatTime(now.toSeconds()));
-      lblTimeLeft.setText(
-          formatTime(media.getDuration().toSeconds() - now.toSeconds()));
-    });
-    mediaPlayer.play();
-  }
-
   /*
     formats seconds into h:mm:ss, or m:ss when under an hour
     s / 3600 is the number of whole hours
@@ -199,6 +159,34 @@ public class MyTunesViewController implements Initializable
             }
           }
         });
+    // listeners for the song list and the playlist list
+    tblSong.getSelectionModel().selectedItemProperty().addListener((obs, old, song) -> {
+      if (song != null) {
+        selectedSong = song;
+        tblPlaylistSongs.getSelectionModel().clearSelection();
+      }
+      updatePlayButton();
+    });
+
+    tblPlaylistSongs.getSelectionModel().selectedItemProperty().addListener((obs, old, song) -> {
+      if (song != null) {
+        selectedSong = song;
+        tblSong.getSelectionModel().clearSelection();
+      }
+      updatePlayButton();
+    });
+    // setting values for the volume slider
+    sldVolume.setMin(0);
+    sldVolume.setMax(1);
+    sldVolume.setValue(0.5);
+    // adding a listener to the volume slider, if something is playing, set the volume to whatever value the slider is on
+    sldVolume.valueProperty().addListener((obs, old, v) -> {
+      if (mediaPlayer != null) {
+        mediaPlayer.setVolume(v.doubleValue());
+      }
+    });
+    tblSong.getSelectionModel().selectedItemProperty()
+            .addListener((obs, oldSong, newSong) -> updatePlayButton());
   }
 
   private void displayError(Throwable t)
@@ -426,6 +414,59 @@ public class MyTunesViewController implements Initializable
       tblPlaylistSongs.getSelectionModel().select(newIndex);  // keep the song selected
     } catch (Exception ex) { displayError(ex); }
   }
+  private void playSong(Song song)
+  {
+    if (song == null || song.getFilePath() == null)
+      return;
+
+    File file = new File(song.getFilePath());
+    if (!file.exists())
+    {
+      System.out.println("File not found: " + file.getAbsolutePath());
+      return;                      // old song keeps playing, nothing is disposed
+    }
+
+    // stop and release the previous song
+    if (mediaPlayer != null)
+    {
+      mediaPlayer.stop();
+      mediaPlayer.dispose();
+      mediaPlayer = null;
+    }
+
+    Media media = new Media(file.toURI().toString());
+    mediaPlayer = new MediaPlayer(media);
+    currentSong = song;
+
+    lblSongName.setText(song.getTitle());
+    lblArtist.setText(song.getArtist());
+    mediaPlayer.setVolume(sldVolume.getValue());
+
+    mediaPlayer.setOnReady(
+            () -> sldSongLength.setMax(media.getDuration().toSeconds()));
+
+    mediaPlayer.currentTimeProperty().addListener((obs, old, now) -> {
+      if (!sldSongLength.isValueChanging())
+      {
+        sldSongLength.setValue(now.toSeconds());
+      }
+      lblTimePassed.setText(formatTime(now.toSeconds()));
+      lblTimeLeft.setText(
+              formatTime(media.getDuration().toSeconds() - now.toSeconds()));
+    });
+
+    // keep the play/pause button in sync
+    mediaPlayer.statusProperty().addListener((obs, old, status) -> updatePlayButton());
+    mediaPlayer.setOnEndOfMedia(() -> {
+      mediaPlayer.stop();
+      updatePlayButton();
+    });
+
+    media.setOnError(() -> System.out.println("Media error: " + media.getError()));
+    mediaPlayer.setOnError(() -> System.out.println("Player error: " + mediaPlayer.getError()));
+
+    mediaPlayer.play();
+  }
 
   public void handleRewindClick(ActionEvent actionEvent)
   {
@@ -433,6 +474,31 @@ public class MyTunesViewController implements Initializable
 
   public void handlePauseClick(ActionEvent actionEvent)
   {
+    Song selected = selectedSong;
+
+    boolean isNewSong = selected != null
+            && (currentSong == null || selected.getId() != currentSong.getId());
+
+    if (isNewSong) {
+      playSong(selected);
+      return;
+    }
+    if (mediaPlayer == null) return;
+
+    if (mediaPlayer.getStatus() == MediaPlayer.Status.PLAYING) {
+      mediaPlayer.pause();
+    } else {
+      mediaPlayer.play();
+    }
+  }
+  // updates the symbol of the play/pause button depending on which song is selected and/or already playing
+  private void updatePlayButton() {
+    Song selected = selectedSong;
+
+    boolean sameSong = selected == null || (currentSong != null && selected.getId() == currentSong.getId());
+    boolean playing = mediaPlayer != null && mediaPlayer.getStatus() == MediaPlayer.Status.PLAYING;
+
+    btnPause.setText(playing && sameSong ? "⏸" : "▶");
   }
 
   public void handleSkipClick(ActionEvent actionEvent)
